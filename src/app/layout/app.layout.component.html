@@ -1,0 +1,38 @@
+<div class="layout-wrapper" [ngClass]="containerClass">
+    <app-topbar></app-topbar>
+    <div class="layout-sidebar">
+        <app-sidebar></app-sidebar>
+
+    </div>
+
+    <div class="layout-main-container">
+        <div class="layout-main">
+
+            <div class="grid">
+                <div class="col-12 lg:col-12 xl:col-12">
+                    <div class="card mb-12" style="height: calc(98vh - 9rem);">
+                        <div style="overflow-y:auto; height:100%;overflow-x: hidden !important">
+
+                            <div class="grid">
+                                <div class="col-12">
+                                    <div class="card px-6 py-6">
+                                        <router-outlet></router-outlet>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-12 lg:col-12 xl:col-12"
+                    style="width:auto; padding:0px;position: absolute; bottom:10px; right: 30px;">
+                    LO ©2023
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="layout-mask"></div>
+</div>

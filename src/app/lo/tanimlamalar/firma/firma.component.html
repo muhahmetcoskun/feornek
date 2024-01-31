@@ -1,0 +1,212 @@
+<p-toast></p-toast>
+<p-toolbar styleClass="mb-4">
+    <ng-template pTemplate="left">
+        <div class="my-2">
+            <button pButton pRipple label="Yeni" icon="pi pi-plus" class="p-button-success mr-2"
+                (click)="openNew()"></button>
+            <!-- <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+            (click)="deleteSelectedfirmas()"
+            [disabled]="!selectedfirmas || !selectedfirmas.length"></button> -->
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="right">
+        <button type="button" pButton pRipple icon="pi pi-file" (click)="dt.exportCSV()" class="mr-2" pTooltip="CSV"
+            tooltipPosition="bottom"></button>
+        <button type="button" pButton pRipple icon="pi pi-file-excel" (click)="exportExcel()"
+            class="p-button-success mr-2" pTooltip="EXCEL" tooltipPosition="bottom"></button>
+        <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()" class="p-button-warning mr-2"
+            pTooltip="PDF" tooltipPosition="bottom"></button>
+
+    </ng-template>
+</p-toolbar>
+
+<p-table [style]="{'width':'100% !important','overflow':'auto!important'}" #dt [value]="firmas" [columns]="cols"
+    [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]" [showCurrentPageReport]="true"
+    currentPageReportTemplate="{totalRecords} kayıttan {first} ile {last} arasındaki kayıt gösteriliyor."
+    [(selection)]="selectedfirmas" selectionMode="multiple" [rowHover]="true" dataKey="id">
+    <ng-template pTemplate="caption">
+        <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            <h5 class="m-0"></h5>
+            <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Ara..."
+                    class="w-full sm:w-auto" />
+            </span>
+        </div>
+    </ng-template>
+
+
+    <ng-template pTemplate="header">
+        <tr>
+
+            <th [hidden]="true">Id <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="siraNo">Sıra No <p-sortIcon field="siraNo"></p-sortIcon></th>
+            <th pSortableColumn="tcknVkn">TCKN/VKN <p-sortIcon field="tcknVkn"></p-sortIcon></th>
+            <th pSortableColumn="firmaAdi">Firma Adı<p-sortIcon field="firmaAdi"></p-sortIcon></th>
+            <th pSortableColumn="firmaSahipAdSoyad">Firma Sahip Ad-Soyad <p-sortIcon
+                    field="firmaSahipAdSoyad"></p-sortIcon></th>
+            <th pSortableColumn="firmaTel">Firma Telefonu <p-sortIcon field="firmaTel"></p-sortIcon></th>
+            <th pSortableColumn="firmaEposta">Firma E-Posta<p-sortIcon field="firmaEposta"></p-sortIcon></th>
+            <th pSortableColumn="firmaAdres">Firma Adresi<p-sortIcon field="firmaAdres"></p-sortIcon></th>
+            <th pSortableColumn="Aktif">Aktif<p-sortIcon field="Aktif"></p-sortIcon></th>
+            <th class="islemButtonWitdh">İşlem</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-firmaD let-i="rowIndex">
+        <tr [ngClass]="{'aktifclass': firmaD.aktif===true }">
+
+            <td [hidden]="true" style="width:14%; min-width:10rem;"><span class="p-column-title">Id</span>
+                {{ firmaD.id}}
+            </td>
+            <td style="width:10%; text-align:center!important;">
+                <span class="p-column-title">Sıra No</span>
+                {{i+1}}
+            </td>
+            <td style="width:40%; min-width:10rem;">
+                <span class="p-column-title">Tckn/Vkn</span>
+                {{firmaD.tcknVkn }}
+            </td>
+            <td style="width:40%; min-width:10rem;">
+                <span class="p-column-title">Firma Adı</span>
+                {{firmaD.firmaAdi }}
+            </td>
+            <td style="width:40%; min-width:10rem;">
+                <span class="p-column-title">Firma Sahip Ad-Soyad</span>
+                {{firmaD.firmaSahipAdSoyad }}
+            </td>
+            <td style="width:40%; min-width:10rem;">
+                <span class="p-column-title">Firma Telefon</span>
+                {{firmaD.firmaTel }}
+            </td>
+            <td style="width:40%; min-width:10rem;">
+                <span class="p-column-title">Firma E-Posta</span>
+                {{firmaD.firmaEposta }}
+            </td>
+            <td style="width:40%; min-width:10rem;">
+                <span class="p-column-title">Firma Adres</span>
+                {{firmaD.firmaAdres }}
+            </td>
+
+            <td style="width:40%; min-width:8rem;">
+                <span class="p-column-title">Durum</span>
+                {{firmaD.aktif |durum }}
+            </td>
+
+            <td style="width:10%; min-width:8rem;">
+                <div class="flex">
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                        (click)="editfirma(firmaD)" pTooltip="Düzenle"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                        (click)="deletefirma(firmaD)" pTooltip="Pasife Al"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+
+
+
+<p-dialog [(visible)]="firmaDialog" [style]="{width: '750px'}" header="Firma Kaydet" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+
+
+        <div class="grid formgrid marginbottom">
+            <div class="col-6 md:col-6">
+                <label for="adi,">Tckn/Vkn</label>
+            </div>
+            <div class="col-6 md:col-6">
+                <input type="text" pInputText id="tcknVkn" [(ngModel)]="firma.tcknVkn" required autofocus
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !firma.tcknVkn}" />
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !firma.tcknVkn">Lütfen Tckn/Vkn
+                    Giriniz</small>
+            </div>
+        </div>
+
+        <div class="grid formgrid marginbottom">
+            <div class="col-6 md:col-6">
+                <label for="adi,">Firma Adı</label>
+            </div>
+            <div class="col-6 md:col-6">
+                <input type="text" pInputText id="firmaAdi" [(ngModel)]="firma.firmaAdi" required autofocus
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !firma.firmaAdi}" />
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !firma.firmaAdi">Lütfen Firma Adı
+                    Giriniz</small>
+            </div>
+        </div>
+        <div class="grid formgrid marginbottom">
+            <div class="col-6 md:col-6">
+                <label for="adi,">Firma Sahip Ad-Soyad</label>
+            </div>
+            <div class="col-6 md:col-6">
+                <input type="text" pInputText id="firmaSahipAdSoyad" [(ngModel)]="firma.firmaSahipAdSoyad" required
+                    autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !firma.firmaSahipAdSoyad}" />
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !firma.firmaSahipAdSoyad">Lütfen Firma Sahip Ad
+                    Soyad
+                    Giriniz</small>
+            </div>
+        </div>
+        <div class="grid formgrid marginbottom">
+            <div class="col-6 md:col-6">
+                <label for="adi,">Firma Telefonu</label>
+            </div>
+            <div class="col-6 md:col-6">
+                <input type="text" pInputText id="firmaTel" [(ngModel)]="firma.firmaTel" required autofocus
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !firma.firmaTel}" />
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !firma.firmaTel">Lütfen Firma Tel
+                    Giriniz</small>
+            </div>
+        </div>
+        <div class="grid formgrid marginbottom">
+            <div class="col-6 md:col-6">
+                <label for="adi,">Firma E-Posta</label>
+            </div>
+            <div class="col-6 md:col-6">
+                <input type="text" pInputText id="firmaEposta" [(ngModel)]="firma.firmaEposta" required autofocus
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !firma.firmaEposta}" />
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !firma.firmaEposta">Lütfen Firma Epostası
+                    Giriniz</small>
+            </div>
+        </div>
+        <div class="grid formgrid marginbottom">
+            <div class="col-6 md:col-6">
+                <label for="adi,">Firma Adresi</label>
+            </div>
+            <div class="col-6 md:col-6">
+                <input type="text" pInputText id="firmaAdres" [(ngModel)]="firma.firmaAdres" required autofocus
+                    [ngClass]="{'ng-invalid ng-dirty' : submitted && !firma.firmaAdres}" />
+                <small class="ng-dirty ng-invalid" *ngIf="submitted && !firma.firmaAdres">Lütfen Firma Adresi
+                    Giriniz</small>
+            </div>
+        </div>
+        <div class="grid formgrid">
+            <div class="col-6 md:col-6">
+                <label for="aktif">Aktif</label>
+            </div>
+            <div class="col-6 md:col-6">
+                <p-inputSwitch id="aktif" [(ngModel)]="firma.aktif"></p-inputSwitch>
+            </div>
+        </div>
+        <div style="height:290px !important;">
+
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Çık" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Kaydet" icon="pi pi-check" class="p-button-text" (click)="savefirma()"></button>
+    </ng-template>
+</p-dialog>
+<p-dialog [(visible)]="deletefirmaDialog" header="Pasife Al" [modal]="true" [style]="{width:'450px'}">
+    <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>Pasife Almak İstediğinize Emin Misiniz?</span>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="Hayır"
+            (click)="deletefirmaDialog = false"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Evet"
+            (click)="confirmDeleteSelected()"></button>
+    </ng-template>
+</p-dialog>
